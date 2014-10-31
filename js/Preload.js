@@ -17,7 +17,7 @@ SpaceShip.Preload.prototype = {
     this.load.image('nostar', 'assets/nostar.png');
     this.load.image('gauge', 'assets/gauge.png');
     this.load.image('gaugebg', 'assets/gaugebg.png');
-    this.load.spritesheet('explode', 'assets/explode.png', 128, 128, 16);
+    this.load.spritesheet('explode', 'assets/explode.png', 64, 64, 16);
     this.load.spritesheet('ship', 'assets/ship.png', 29, 32, 4);
 
     this.load.image('startbtn', 'assets/startbtn.png');
@@ -28,6 +28,12 @@ SpaceShip.Preload.prototype = {
     	this.load.tilemap('map'+i, 'assets/maps/level'+i+'.json', null, Phaser.Tilemap.TILED_JSON);
 		this.load.image('levelbtn'+i, 'assets/levelbtn'+i+'.png');
 	}
+
+	this.load.image('success', 'assets/success.png');
+	this.load.image('nextlvlbtn', 'assets/nextlvlbtn.png');
+	this.load.image('menubtn', 'assets/menubtn.png');
+	this.load.image('retrybtn', 'assets/retrybtn.png');
+
   },
   create: function() {
     this.state.start('MainMenu');

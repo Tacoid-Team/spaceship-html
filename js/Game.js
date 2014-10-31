@@ -17,7 +17,6 @@ SpaceShip.Game.prototype = {
 	var layer = map.createLayer('Tile Layer 1');
 
 	map.addTilesetImage('ground');
-	map.addTilesetImage('star');
 	
 	layer.resizeWorld();
 
@@ -28,6 +27,7 @@ SpaceShip.Game.prototype = {
 	this.game.physics.p2.gravity.y = 200;
 	// ---
 
+	// Gauge
 	var gaugebg = this.game.add.sprite(760, 140, 'gaugebg');
 	gaugebg.fixedToCamera = true;
 	this.gauge = this.game.add.sprite(760, 140, 'gauge');
@@ -36,8 +36,8 @@ SpaceShip.Game.prototype = {
 	this.gauge.crop(this.gaugeCrop);
 
 	// Restart button
-	this.game.add.button(744, 360, 'restartbtn', this.restart, this, 1, 1, 0, 1);
-	this.game.add.button(744, 420, 'homebtn', this.home, this, 1, 1, 0, 1);
+	this.restartbtn = this.game.add.button(744, 360, 'restartbtn', this.restart, this, 1, 1, 0, 1);
+	this.homebtn = this.game.add.button(744, 420, 'homebtn', this.home, this, 1, 1, 0, 1);
 
 	//  An explosion pool
 	this.explosions = this.game.add.group();
@@ -51,7 +51,6 @@ SpaceShip.Game.prototype = {
 	this.game.add.image(755, 94, 'nostar');
 	this.star_group = this.game.add.group();
 	map.createFromObjects('stars', 1, 'star', 0, true, false, this.star_group);
-//	this.star_group.callAll('animations.add', 'animations', 'disappear', [1, 2, 3, 4, 5, 6, 7, 8]);
 
 
 	// Flag
@@ -62,7 +61,7 @@ SpaceShip.Game.prototype = {
 	// Score
 	this.score = 0;
 	this.scoreMax = this.star_group.children.length;
-	//this.scoreText = this.game.add.text(850, 50, '0/' + this.scoreMax, { align: 'right', fontSize: '32px', fill: '#FFF' });
+	this.landed = false;
 
 
 	// Ship
@@ -74,18 +73,7 @@ SpaceShip.Game.prototype = {
 	this.ship.body.onBeginContact.add(this.hitWall, this);
 	// ---
 
-
-
-	//  By default the ship will collide with the World bounds,
-	//  however because you have changed the size of the world (via layer.resizeWorld) to match the tilemap
-	//  you need to rebuild the physics world boundary as well. The following
-	//  line does that. The first 4 parameters control if you need a boundary on the left, right, top and bottom of your world.
-	//  The final parameter (false) controls if the boundary should use its own collision group or not. In this case we don't require
-	//  that, so it's set to false. But if you had custom collision groups set-up then you would need this set to true.
 	this.game.physics.p2.setBoundsToWorld(true, true, true, true, false);
-
-	//  Even after the world boundary is set-up you can still toggle if the ship collides or not with this:
-	// ship.body.collideWorldBounds = false;
 
 	this.pointerDown = false;
 	this.startPoint = {};
@@ -93,19 +81,19 @@ SpaceShip.Game.prototype = {
 	this.life = 100;
 	this.last_impact = 0;
 	this.captured_stars = [];
+	this.game_paused = false;
 
 	this.game.input.onDown.add(function(pointer) {
-		this.startPoint.x = pointer.clientX;
-		this.startPoint.y = pointer.clientY;
-		this.startRot = this.ship.body.rotation;
-		this.pointerDown = true;
-		this.pointer = pointer;
-		this.ship.animations.play('propulse', 10, true);
+		if (pointer.position.x < 740 && !this.game_paused) {
+			this.startPoint.x = pointer.position.x;
+			this.startRot = this.ship.body.rotation;
+			this.pointerDown = true;
+			this.pointer = pointer;
+			this.ship.animations.play('propulse', 10, true);
+		}
 	}, this);
 
 	this.game.input.onUp.add(function(pointer) {
-		this.startPoint.x = pointer.clientX;
-		this.startPoint.y = pointer.clientY;
 		this.pointerDown = false;
 		this.ship.animations.stop();
 		this.ship.frame = 0;
@@ -121,15 +109,47 @@ SpaceShip.Game.prototype = {
 	if (this.pointerDown) {
 		this.ship.body.thrust(400);
 		if (this.pointerDown) {
-			var deltaX = this.pointer.clientX - this.startPoint.x;
+			var deltaX = this.pointer.position.x - this.startPoint.x;
 			this.ship.body.rotation = this.startRot + deltaX / 500;
 		}
+		this.landed = false;
+		this.last_landed = 0;
+	} else if (!this.landed && this.nearFlag() && this.isLanded()) {
+		if (this.score > 0) {
+			this.landed = true;
+			console.log('Landed!');
+			this.success_popup();
+		}
 	}
+  },
+  success_popup: function() {
+	this.restartbtn.input.enabled = false;
+	this.homebtn.input.enabled = false;
+	this.game_paused = true;
+
+
+	this.popup = this.game.add.image(400, 240, 'success');
+
+	this.popup.anchor.x = .5;
+	this.popup.anchor.y = .5;
+	var nextlvlbtn = this.game.add.button(490, 270, 'nextlvlbtn', this.nextlevel, this);
+	nextlvlbtn.anchor.x = 0.5;
+	nextlvlbtn.anchor.y = 0.5;
+
+	this.game.add.tween(nextlvlbtn.scale).to({ x: 1.1, y: 1.1}, 200, Phaser.Easing.Linear.None, true, 0, 0, true);
+
+	this.game.add.button(230, 265, 'retrybtn', this.restart, this);
+	this.game.add.button(295, 265, 'menubtn', this.home, this);
   },
   home: function() {
 	this.state.start('MainMenu');
   },
   restart: function() {
+	this.state.start('Game');
+  },
+  nextlevel: function() {
+	// todo gerer cas last level.
+	this.game.state.states['Game'].level = this.level + 1;
 	this.state.start('Game');
   },
   starOverlap: function(star) {
@@ -158,49 +178,57 @@ SpaceShip.Game.prototype = {
 		this.score += 1;
 	}
   },
-  hitWall: function(wall) {
-	if (this.game.time.now - this.last_impact < 1000) {
-		return;
-	}
-
+  nearFlag: function() {
+	var distx = Math.abs(this.flag.x - this.ship.x);
+	var disty = Math.abs(this.flag.y - this.ship.y + this.flag.height);
+	return (disty < 20 && distx < 60);
+  },
+  isLanded: function() {
 	var rot = this.ship.body.rotation % (2 * Math.PI);
 	if (rot > Math.PI) {
 		rot -= 2 * Math.PI;
 	} else if (rot < -Math.PI) {
 		rot += 2 * Math.PI;
 	}
-	console.log(rot, this.ship.body.velocity.x, this.ship.body.velocity.y);
 
-    if (rot > -.1 && rot < .1 && this.ship.body.velocity.y > -5 && this.ship.body.velocity.y <= 0 && Math.abs(this.ship.body.velocity.x) < 1) {
-		console.log("landed !");
-	} else {
-		var force = Math.max(Math.abs(this.ship.body.velocity.x), Math.abs(this.ship.body.velocity.y));
-		var impact = force * force * force / 100000;
-		console.log(impact);
-		if (impact > 10) {
-			this.last_impact = this.game.time.now;
-			this.life -= impact;
-			if (this.life < 0) {
-				this.life = 0;
-				var explosionAnimation = this.explosions.getFirstExists(false);
-				if (explosionAnimation) {
-					explosionAnimation.reset(this.ship.x, this.ship.y);
-					explosionAnimation.play('explode', 30, false, true);
-					this.ship.kill();
-				}
-			} else {
-				this.game.add.tween(this.ship).from({alpha: 0.2}, 200, Phaser.Easing.Linear.None, true, 0, 4, true);
-			}
-
-			// update gauge
-			this.gauge.cameraOffset.y = 140 + 200 - this.life * 2;
-			this.gaugeCrop.y = 200 - this.life * 2;
-			this.gaugeCrop.height = this.life * 2;
-			this.gauge.updateCrop();
-
-			console.log(this.life);
-
+	var force = this.ship.body.velocity.x * this.ship.body.velocity.x + this.ship.body.velocity.y * this.ship.body.velocity.y;
+	if (force < .01 && Math.abs(rot) < .01) {
+		if (this.last_landed == 0) {
+			this.last_landed = this.game.time.now;
+		} else if (this.game.time.now - this.last_landed > 200) {
+			return true;
 		}
+	} else {
+		this.last_landed = 0;
+	}
+	return false;
+  },
+  hitWall: function(wall, shapeWall, shapeShip, equation) {
+	if (this.game.time.now - this.last_impact < 1000) {
+		return;
+	}
+	var force = this.ship.body.velocity.x * this.ship.body.velocity.x + this.ship.body.velocity.y * this.ship.body.velocity.y;
+	var impact = force / 2500;
+	if (impact > 10) {
+		this.life -= impact;
+		if (this.life < 0) {
+			this.life = 0;
+			var explosionAnimation = this.explosions.getFirstExists(false);
+			if (explosionAnimation) {
+				explosionAnimation.reset(this.ship.x, this.ship.y);
+				explosionAnimation.play('explode', 30, false, true);
+				this.ship.kill();
+			}
+		} else {
+			this.last_impact = this.game.time.now;
+			this.game.add.tween(this.ship).from({alpha: 0.2}, 200, Phaser.Easing.Linear.None, true, 0, 4, true);
+		}
+
+		// update gauge
+		this.gauge.cameraOffset.y = 140 + 200 - this.life * 2;
+		this.gaugeCrop.y = 200 - this.life * 2;
+		this.gaugeCrop.height = this.life * 2;
+		this.gauge.updateCrop();
 	}
   }
 };

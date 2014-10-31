@@ -21,7 +21,7 @@ if (window.devicePixelRatio === 3)
 width = 800;
 height = 480;
 
-SpaceShip.game = new Phaser.Game(width, height, Phaser.CANVAS, '');
+SpaceShip.game = new Phaser.Game(width, height, Phaser.AUTO, '');
 
 SpaceShip.game.state.add('Boot', SpaceShip.Boot, true);
 SpaceShip.game.state.add('Preload', SpaceShip.Preload);

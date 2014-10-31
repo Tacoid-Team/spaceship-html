@@ -15,6 +15,7 @@ SpaceShip.Boot.prototype = {
 		this.scale.refresh();
 	} else {
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+		this.scale.forceLandscape = true;
 		this.scale.pageAlignHorizontally = true;
 		this.scale.pageAlignVertically = true;
 //		this.scale.forceOrientation(true, false);
