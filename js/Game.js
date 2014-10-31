@@ -136,10 +136,28 @@ SpaceShip.Game.prototype = {
 	nextlvlbtn.anchor.x = 0.5;
 	nextlvlbtn.anchor.y = 0.5;
 
-	this.game.add.tween(nextlvlbtn.scale).to({ x: 1.1, y: 1.1}, 200, Phaser.Easing.Linear.None, true, 0, 0, true);
-
 	this.game.add.button(230, 265, 'retrybtn', this.restart, this);
 	this.game.add.button(295, 265, 'menubtn', this.home, this);
+
+	console.log(this.score);
+
+	for (var i = 0; i < this.score; i++) {
+		var s = this.game.add.image(368 + i * 32, 220, 'star');
+		s.anchor.x = .5;
+		s.anchor.y = .5;
+		s.scale.x = .1;
+		s.scale.y = .1;
+		var last_tween = this.game.add.tween(s.scale).to({ x: 1, y: 1}, 200, Phaser.Easing.Linear.None, true, 400 + i * 200);
+	}
+	for (var i = 0; i < 3; i++) {
+		var s = this.game.add.image(368 + i * 32, 220, 'nostar2');
+		s.anchor.x = .5;
+		s.anchor.y = .5;
+	}
+
+	t = this.game.add.tween(nextlvlbtn.scale).to({ x: 1.1, y: 1.1}, 300, Phaser.Easing.Linear.None, false, 0, 0, true);
+	last_tween.onComplete.add(function() {this.val.start(); console.log('ici');}, {val: t});
+
   },
   home: function() {
 	this.state.start('MainMenu');

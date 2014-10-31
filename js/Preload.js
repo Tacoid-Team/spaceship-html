@@ -15,6 +15,7 @@ SpaceShip.Preload.prototype = {
     this.load.image('background', 'assets/background.png');
     this.load.image('star', 'assets/star.png');
     this.load.image('nostar', 'assets/nostar.png');
+    this.load.image('nostar2', 'assets/nostar2.png');
     this.load.image('gauge', 'assets/gauge.png');
     this.load.image('gaugebg', 'assets/gaugebg.png');
     this.load.spritesheet('explode', 'assets/explode.png', 64, 64, 16);
