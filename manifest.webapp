@@ -1,0 +1,11 @@
+{
+  "version": "0.1",
+  "name": "SpaceShip",
+  "description": "Awesome spaceship game.",
+  "launch_path": "/index.html",
+  "developer": {
+    "name": "Maxime Chéramy",
+    "url": "http://maxime.cheramy.org"
+  },
+  "default_locale": "en"
+}
