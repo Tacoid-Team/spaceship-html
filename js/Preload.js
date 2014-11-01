@@ -30,11 +30,16 @@ SpaceShip.Preload.prototype = {
 		this.load.image('levelbtn'+i, 'assets/levelbtn'+i+'.png');
 	}
 
+	this.load.image('lock', 'assets/lock.png');
 	this.load.image('success', 'assets/success.png');
 	this.load.image('nextlvlbtn', 'assets/nextlvlbtn.png');
 	this.load.image('menubtn', 'assets/menubtn.png');
 	this.load.image('retrybtn', 'assets/retrybtn.png');
 
+	SpaceShip.scores = JSON.parse(localStorage.getItem('scores'));
+	if (SpaceShip.scores == null) {
+		SpaceShip.scores = {};
+	}
   },
   create: function() {
     this.state.start('MainMenu');

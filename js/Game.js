@@ -119,6 +119,10 @@ SpaceShip.Game.prototype = {
 			this.landed = true;
 			console.log('Landed!');
 			this.success_popup();
+			if (!SpaceShip.scores['level' + this.level] || SpaceShip.scores['level' + this.level] < this.score) {
+				SpaceShip.scores['level' + this.level] = this.score;
+				localStorage.setItem('scores', JSON.stringify(SpaceShip.scores));
+			}
 		}
 	}
   },
@@ -141,6 +145,12 @@ SpaceShip.Game.prototype = {
 
 	console.log(this.score);
 
+	for (var i = 0; i < 3; i++) {
+		var s = this.game.add.image(368 + i * 32, 220, 'nostar2');
+		s.anchor.x = .5;
+		s.anchor.y = .5;
+	}
+
 	for (var i = 0; i < this.score; i++) {
 		var s = this.game.add.image(368 + i * 32, 220, 'star');
 		s.anchor.x = .5;
@@ -148,11 +158,6 @@ SpaceShip.Game.prototype = {
 		s.scale.x = .1;
 		s.scale.y = .1;
 		var last_tween = this.game.add.tween(s.scale).to({ x: 1, y: 1}, 200, Phaser.Easing.Linear.None, true, 400 + i * 200);
-	}
-	for (var i = 0; i < 3; i++) {
-		var s = this.game.add.image(368 + i * 32, 220, 'nostar2');
-		s.anchor.x = .5;
-		s.anchor.y = .5;
 	}
 
 	t = this.game.add.tween(nextlvlbtn.scale).to({ x: 1.1, y: 1.1}, 300, Phaser.Easing.Linear.None, false, 0, 0, true);
