@@ -32,6 +32,7 @@ SpaceShip.Preload.prototype = {
 
 	this.load.image('lock', 'assets/lock.png');
 	this.load.image('success', 'assets/success.png');
+	this.load.image('lost', 'assets/lost.png');
 	this.load.image('nextlvlbtn', 'assets/nextlvlbtn.png');
 	this.load.image('menubtn', 'assets/menubtn.png');
 	this.load.image('retrybtn', 'assets/retrybtn.png');
