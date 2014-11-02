@@ -49,13 +49,16 @@ SpaceShip.MainMenu.prototype = {
   },
   update: function() {
       if (this.pointerDown) {
-          this.buttons.forEachAlive(this.move, this);
+          var deltaX = this.pointer.position.x - this.startPointX;
+          if (this.buttons.getTop().position.x < 400 || this.buttons.getBottom().position.x > 400) {
+              deltaX *= .5;
+          }
+          this.buttons.forEachAlive(this.move, {delta: deltaX});
           this.startPointX = this.pointer.position.x;
       }
   },
   move: function(button) {
-    var deltaX = this.pointer.position.x - this.startPointX;
-    button.position.x += deltaX;
+    button.position.x += this.delta;
     button.alpha = dist2alpha(button.position.x - 400);
   },
   start_game: function(button) {
