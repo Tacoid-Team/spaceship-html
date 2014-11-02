@@ -253,7 +253,11 @@ SpaceShip.Game.prototype = {
             if (explosionAnimation) {
                 explosionAnimation.reset(this.ship.x, this.ship.y);
                 explosionAnimation.play('explode', 30, false, true);
+                if (navigator.vibrate) {
+                    navigator.vibrate(100);
+                }
                 this.ship.kill();
+                // TODO: add a delay.
                 this.lost_popup();
             }
         } else {

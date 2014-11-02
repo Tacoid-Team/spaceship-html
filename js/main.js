@@ -20,6 +20,7 @@ if (window.devicePixelRatio === 3)
 }*/
 width = 800;
 height = 480;
+navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
 
 SpaceShip.game = new Phaser.Game(width, height, Phaser.AUTO, '');
 
@@ -29,3 +30,19 @@ SpaceShip.game.state.add('MainMenu', SpaceShip.MainMenu);
 SpaceShip.game.state.add('Levels', SpaceShip.Levels);
 SpaceShip.game.state.add('Game', SpaceShip.Game);
 
+function onLoad() {
+   document.addEventListener("deviceready", onDeviceReady, false);
+}
+
+// device APIs are available
+//
+function onDeviceReady() {
+   // Register the event listener
+   document.addEventListener("backbutton", onBackKeyDown, false);
+}
+
+// Handle the back button
+//
+function onBackKeyDown() {
+   SpaceShip.game.state.start('MainMenu');
+}

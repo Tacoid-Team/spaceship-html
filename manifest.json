@@ -15,6 +15,7 @@
       "landscape": {
         "image": "assets/background.png"
       }
-  }
+  },
+  "xwalk_permissions": ["Vibration"]
 }
 
