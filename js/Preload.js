@@ -8,7 +8,10 @@ SpaceShip.Preload.prototype = {
     this.preloadBar = this.add.sprite(this.game.world.centerX, this.game.world.centerY + 128, 'preloadbar');
     this.preloadBar.anchor.setTo(0.5);
 
+    this.textProgress = this.add.text(270, 200, 'Loading: 0%', { font: "42px Arial", fill: "#ffffff", align: "center" });
+
     this.load.setPreloadSprite(this.preloadBar);
+    this.load.onFileComplete.add(this.fileLoaded, this);
 
     this.load.image('ground', 'assets/ground.png');
     this.load.spritesheet('flag', 'assets/flag.png', 40, 64, 9);
@@ -44,5 +47,8 @@ SpaceShip.Preload.prototype = {
   },
   create: function() {
     this.state.start('MainMenu');
+  },
+  fileLoaded: function(progress) {
+    this.textProgress.text = 'Loading: ' + progress + '%';
   }
 };
