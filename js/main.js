@@ -44,5 +44,6 @@ function onDeviceReady() {
 // Handle the back button
 //
 function onBackKeyDown() {
+    console.log('back!');
    SpaceShip.game.state.start('MainMenu');
 }
