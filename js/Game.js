@@ -257,8 +257,7 @@ SpaceShip.Game.prototype = {
                     navigator.vibrate(100);
                 }
                 this.ship.kill();
-                // TODO: add a delay.
-                this.lost_popup();
+                this.game.time.events.add(600, this.lost_popup, this);
             }
         } else {
             this.last_impact = this.game.time.now;
