@@ -5,8 +5,6 @@ SpaceShip.Game = function(){};
 //setting game configuration and loading the assets for the loading screen
 SpaceShip.Game.prototype = {
   create: function() {
-    console.log("Create level " + this.level)
-
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
     // Background
@@ -110,14 +108,13 @@ SpaceShip.Game.prototype = {
         this.ship.body.thrust(400);
         if (this.pointerDown) {
             var deltaX = this.pointer.position.x - this.startPoint.x;
-            this.ship.body.rotation = this.startRot + deltaX / 500;
+            this.ship.body.rotation = this.startRot + deltaX / 200;
         }
         this.landed = false;
         this.last_landed = 0;
     } else if (!this.landed && this.nearFlag() && this.isLanded()) {
         if (this.score > 0) {
             this.landed = true;
-            console.log('Landed!');
             this.success_popup();
             if (!SpaceShip.scores['level' + this.level] || SpaceShip.scores['level' + this.level] < this.score) {
                 SpaceShip.scores['level' + this.level] = this.score;
@@ -177,7 +174,7 @@ SpaceShip.Game.prototype = {
     }
 
     t = this.game.add.tween(nextlvlbtn.scale).to({ x: 1.1, y: 1.1}, 300, Phaser.Easing.Linear.None, false, 0, 0, true);
-    last_tween.onComplete.add(function() {this.val.start(); console.log('ici');}, {val: t});
+    last_tween.onComplete.add(function() {this.val.start(); }, {val: t});
 
   },
   home: function() {
@@ -218,9 +215,9 @@ SpaceShip.Game.prototype = {
     }
   },
   nearFlag: function() {
-    var distx = Math.abs(this.flag.x - this.ship.x);
+    var distx =  this.ship.x - this.flag.x;
     var disty = Math.abs(this.flag.y - this.ship.y + this.flag.height);
-    return (disty < 20 && distx < 60);
+    return (disty < 20 && distx < 60 && distx > -20);
   },
   isLanded: function() {
     var rot = this.ship.body.rotation % (2 * Math.PI);
@@ -247,7 +244,6 @@ SpaceShip.Game.prototype = {
         return;
     }
     var force = this.ship.body.velocity.x * this.ship.body.velocity.x + this.ship.body.velocity.y * this.ship.body.velocity.y;
-    console.log('force: ' + force);
     var impact = force * 0.0019 - 17;
     if (impact > 2) {
         this.life -= impact;

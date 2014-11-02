@@ -1,0 +1,20 @@
+{
+  "name": "SpaceShip",
+  "version": "0.1",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "app": {
+    "launch":{
+      "local_path": "index.html"
+    }
+  },
+  "icons": {
+    "128": "images/icon.png"
+  },
+  "xwalk_launch_screen": {
+      "landscape": {
+        "image": "assets/background.png"
+      }
+  }
+}
+
