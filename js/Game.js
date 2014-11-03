@@ -22,6 +22,8 @@ SpaceShip.Game.prototype = {
     map.setCollisionBetween(1, 17);
 
     this.game.physics.p2.convertTilemap(map, layer);
+    // In order to add any kind of collisions.
+    //walls = this.game.physics.p2.convertCollisionObjects(map, "collisions");
     this.game.physics.p2.restitution = .2;
     this.game.physics.p2.gravity.y = 200;
     // ---
@@ -51,11 +53,12 @@ SpaceShip.Game.prototype = {
     this.star_group = this.game.add.group();
     map.createFromObjects('stars', 1, 'star', 0, true, false, this.star_group);
 
-
     // Flag
     this.flag = this.game.add.sprite(map.objects['flag'][0]['x'], map.objects['flag'][0]['y'], 'flag');
     this.flag.y -= this.flag.height;
     this.flag.animations.add('flag', [1, 2, 3, 4, 5, 6, 7, 8]);
+
+
 
     // Score
     this.score = 0;
@@ -71,6 +74,19 @@ SpaceShip.Game.prototype = {
     this.ship.body.addPolygon({}, 30, 30  ,  0, 30  ,  14, 8);
     this.ship.body.onBeginContact.add(this.hitWall, this);
     // ---
+
+
+    // Platforms
+    this.dyn_group = this.game.add.group();
+    map.createFromObjects('dynamic', 31, 'dynground', 0, true, false, this.dyn_group);
+    this.game.physics.p2.enable(this.dyn_group);
+    this.dyn_group.forEachAlive(function(d) {
+        d.body.data.gravityScale = 0;
+        d.body.fixedRotation=true;
+        d.body.x += 30; 
+        d.body.y += 16;
+        d.body.onBeginContact.add(function(other) { if (other === this.ship.body) this.body.data.gravityScale = 1; }, {ship: this.ship, body : d.body});
+    }, this);
 
     this.game.physics.p2.setBoundsToWorld(true, true, true, true, false);
 

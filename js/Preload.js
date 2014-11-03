@@ -13,6 +13,7 @@ SpaceShip.Preload.prototype = {
     this.load.setPreloadSprite(this.preloadBar);
     this.load.onFileComplete.add(this.fileLoaded, this);
 
+    this.load.image('dynground', 'assets/dynground.png');
     this.load.image('ground', 'assets/ground.png');
     this.load.spritesheet('flag', 'assets/flag.png', 40, 64, 9);
     this.load.image('background', 'assets/background.png');
