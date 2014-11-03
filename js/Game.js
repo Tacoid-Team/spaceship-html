@@ -11,7 +11,8 @@ SpaceShip.Game.prototype = {
     this.game.add.image(0, 0, 'background');    
 
     // Map
-    var map = this.game.add.tilemap('map' + this.level);
+	console.log(this.n_world, this.level);
+    var map = this.game.add.tilemap('map' + this.n_world + '_' + this.level);
     var layer = map.createLayer('Tile Layer 1');
 
     map.addTilesetImage('ground');

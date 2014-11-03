@@ -12,8 +12,8 @@ SpaceShip.MainMenu.prototype = {
     this.game.add.image(0, 0, 'background');
 
     this.buttons = this.game.add.group();
-    for (var i = 0; i < 5; i++) {
-        var t = this.game.add.button(this.game.width/2 + 350 * i, this.game.height/2, 'startbtn', this.start_game, this);
+    for (var i = 0; i < 3; i++) {
+        var t = this.game.add.button(this.game.width/2 + 350 * i, this.game.height/2, 'startbtn', this.start_game, {game: this.game, n_world: i+1});
         t.anchor.set(0.5, 0.5);
         if (i == 0) {
             t.alpha = 1;
@@ -63,6 +63,7 @@ SpaceShip.MainMenu.prototype = {
   },
   start_game: function(button) {
     if (button.position.x == 400) {
+        this.game.state.states['Levels'].n_world = this.n_world;
         this.game.state.start('Levels');
     }
   }

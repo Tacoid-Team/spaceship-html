@@ -29,7 +29,9 @@ SpaceShip.Preload.prototype = {
     this.load.spritesheet('homebtn', 'assets/homebtn.png', 48, 48, 2);
 
 	for (i = 1; i <= 10; i++) {
-    	this.load.tilemap('map'+i, 'assets/maps/level'+i+'.json', null, Phaser.Tilemap.TILED_JSON);
+		for (var w = 1; w <= 3; w++) {
+			this.load.tilemap('map'+w+'_'+i, 'assets/maps/world'+w+'/level'+i+'.json', null, Phaser.Tilemap.TILED_JSON);
+		}
 		this.load.image('levelbtn'+i, 'assets/levelbtn'+i+'.png');
 	}
 
